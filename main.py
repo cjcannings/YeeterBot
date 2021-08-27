@@ -1,6 +1,7 @@
 import discord
 import os
 import random
+import requests
 
 from config import TOKEN
 
@@ -43,6 +44,14 @@ def get_percentage():
     return(perc, bar)
 
 
+# change first letter in string to lower case for use mid-sentence
+def first_lower(s):
+   if len(s) == 0:
+      return s
+   else:
+      return s[0].lower() + s[1:]
+
+
 # event that listens for messages
 @client.event
 async def on_message(message):
@@ -75,6 +84,13 @@ async def on_message(message):
         await message.channel.send(f'{mentioned_user.mention} is {perc}% stinky {bar}')
         return
 
+    # give advice to user
+    if message.content.startswith('$advice') and message.mentions[0]:
+        r = requests.get('https://api.adviceslip.com/advice')
+        advice = first_lower(r.json().get('slip').get('advice'))
+        #print(r.json().get('slip').get('advice'))
+        mentioned_user = message.mentions[0]
+        await message.channel.send(f'Here\'s some advice, {mentioned_user.mention}, {advice}')
     
             
 
