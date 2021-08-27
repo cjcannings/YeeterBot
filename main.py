@@ -40,7 +40,7 @@ def get_percentage():
         bar = '██████████'
     
     print(f'{perc} and {bar}')
-    return(f'Egg\'s stink level is {perc}% {bar}')
+    return(perc, bar)
 
 
 # event that listens for messages
@@ -62,9 +62,17 @@ async def on_message(message):
         await message.channel.send('stinks')
         return
     
-    # percentage
-    if message.content.startswith('$eggstinks'):
-        await message.channel.send(str(get_percentage()))
+    # stinks percentage self
+    if user_message == '$stinks':
+        perc, bar = get_percentage()
+        await message.channel.send(f'{message.author.mention} is {perc}% stinky {bar}')
+        return
+
+    # stinks percentage other user
+    if message.content.startswith('$stinks') and message.mentions[0]:
+        perc, bar = get_percentage()
+        mentioned_user = message.mentions[0]
+        await message.channel.send(f'{mentioned_user.mention} is {perc}% stinky {bar}')
         return
 
     
